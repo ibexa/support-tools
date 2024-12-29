@@ -44,7 +44,7 @@ class SystemInfoTab extends AbstractControllerBasedTab
 
     public function getControllerReference(array $parameters): ControllerReference
     {
-        return new ControllerReference('ibexa.support_tools.view.controller:viewInfoAction', [
+        return new ControllerReference('ibexa.support_tools.view.controller::viewInfoAction', [
             'systemInfoIdentifier' => $this->collectorIdentifier,
             'viewType' => 'pjax_tab',
         ]);
