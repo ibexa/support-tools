@@ -2,6 +2,7 @@ services:
     Ibexa\Bundle\SystemInfo\Controller\SystemInfoController:
         parent: Ibexa\Contracts\AdminUi\Controller\Controller
         autowire: true
+        autoconfigure: true
         arguments:
             - '@Ibexa\Bundle\SystemInfo\SystemInfo\Registry\IdentifierBased'
         tags:
