@@ -113,6 +113,11 @@ class IbexaSystemInfoCollector implements SystemInfoCollector
     ];
 
     /**
+     * @var \Ibexa\Bundle\SystemInfo\SystemInfo\Collector\SystemInfoCollector
+     */
+    private $systemInfoCollector;
+
+    /**
      * @var \Ibexa\Bundle\SystemInfo\SystemInfo\Value\ComposerSystemInfo|null
      */
     private $composerInfo;
@@ -127,15 +132,7 @@ class IbexaSystemInfoCollector implements SystemInfoCollector
         SystemInfoCollector $composerCollector,
         string $kernelProjectDir,
     ) {
-        try {
-            $composerInfo = $composerCollector->collect();
-            if ($composerInfo instanceof ComposerSystemInfo) {
-                $this->composerInfo = $composerInfo;
-            }
-        } catch (ComposerLockFileNotFoundException | ComposerFileValidationException $e) {
-            // do nothing
-        }
-
+        $this->systemInfoCollector = $composerCollector;
         $this->kernelProjectDir = $kernelProjectDir;
     }
 
@@ -148,6 +145,17 @@ class IbexaSystemInfoCollector implements SystemInfoCollector
      */
     public function collect(): IbexaSystemInfo
     {
+        if($this->composerInfo === null) {
+            try {
+                $composerInfo = $this->systemInfoCollector->collect();
+                if ($composerInfo instanceof ComposerSystemInfo) {
+                    $this->composerInfo = $composerInfo;
+                }
+            } catch (ComposerLockFileNotFoundException | ComposerFileValidationException $e) {
+            // do nothing
+            }
+        }
+
         $vendorDir = sprintf('%s/vendor/', $this->kernelProjectDir);
 
         $ibexa = new IbexaSystemInfo([
