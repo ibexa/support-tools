@@ -40,5 +40,24 @@ class IbexaSystemInfoCollectorTest extends TestCase
         $systemInfo = $systemInfoCollector->collect();
         self::assertSame(IbexaSystemInfo::PRODUCT_NAME_OSS, $systemInfo->name);
         self::assertSame(Ibexa::VERSION, $systemInfo->release);
+
+        // Test that information from the composer.json file is correctly extracted
+        self::assertSame('dev', $systemInfo->lowestStability);
+    }
+
+    public function testCollectWithInvalidComposerJson(): void
+    {
+        $composerCollector = new JsonComposerLockSystemInfoCollector(
+            $this->versionStabilityChecker,
+            __DIR__ . '/_fixtures/corrupted_composer.lock',
+            __DIR__ . '/_fixtures/corrupted_composer.json'
+        );
+
+        $systemInfoCollector = new IbexaSystemInfoCollector(
+            $composerCollector,
+            dirname(__DIR__, 5)
+        );
+        $systemInfo = $systemInfoCollector->collect();
+        self::assertNull($systemInfo->lowestStability);
     }
 }
